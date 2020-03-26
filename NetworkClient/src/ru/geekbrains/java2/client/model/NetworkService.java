@@ -25,7 +25,7 @@ public class NetworkService {
 
     private MessageHandler messageHandler;
     private AuthEvent successfulAuthEvent;
-    private String nickname;
+    private volatile String nickname;
 
     public NetworkService(String host, int port) {
         this.host = host;
@@ -80,6 +80,10 @@ public class NetworkService {
                             System.err.println("Unknown type of command: " + command.getType());
                     }
                 } catch (IOException e) {
+                    if(nickname == null){
+                        controller.showErrorMessage("Соединение прервано по таймауту!");
+                        System.exit(1);
+                    }
                     System.out.println("Поток чтения был прерван!");
                     return;
                 } catch (ClassNotFoundException e) {

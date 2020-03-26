@@ -1,5 +1,6 @@
 package ru.geekbrains.java2.server.auth;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,11 +18,13 @@ public class BaseAuthService implements AuthService {
         }
     }
 
-    private static final List<UserData> USER_DATA = List.of(
-            new UserData("login1", "pass1", "username1"),
-            new UserData("login2", "pass2", "username2"),
-            new UserData("login3", "pass3", "username3")
-    );
+    private static final List<UserData> USER_DATA = new ArrayList<>();
+
+    public BaseAuthService(){
+        USER_DATA.add(new UserData("login1", "pass1", "username1"));
+        USER_DATA.add(new UserData("login2", "pass2", "username2"));
+        USER_DATA.add(new UserData("login3", "pass3", "username3"));
+    }
 
     @Override
     public String getUsernameByLoginAndPassword(String login, String password) {
