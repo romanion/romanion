@@ -77,10 +77,10 @@ public class ClientChat extends JFrame {
     }
 
     public void updateUsers(List<String> users) {
-        SwingUtilities.invokeLater(() -> {
-            DefaultListModel<String> model = new DefaultListModel<>();
-            model.addAll(users);
-            usersList.setModel(model);
-        });
+//        SwingUtilities.invokeLater(() -> {
+//            DefaultListModel<String> model = new DefaultListModel<>();
+//            model.addAll(users);
+//            usersList.setModel(model);
+//        });
     }
 }

@@ -19,6 +19,7 @@ public class ClientHandler {
     private ObjectOutputStream out;
 
     private String nickname;
+    private volatile boolean IS_AUTH = false;
 
     public ClientHandler(NetworkServer networkServer, Socket socket) {
         this.networkServer = networkServer;
@@ -90,7 +91,7 @@ public class ClientHandler {
 
     private Command readCommand() throws IOException {
         try {
-             return (Command) in.readObject();
+            return (Command) in.readObject();
         } catch (ClassNotFoundException e) {
             String errorMessage = "Unknown type of object from client!";
             System.err.println(errorMessage);
@@ -101,6 +102,7 @@ public class ClientHandler {
     }
 
     private void authentication() throws IOException {
+        closeConnectionTimer();
         while (true) {
             Command command = readCommand();
             if (command == null) {
@@ -109,12 +111,30 @@ public class ClientHandler {
             if (command.getType() == CommandType.AUTH) {
                 boolean successfulAuth = processAuthCommand(command);
                 if (successfulAuth){
+                    IS_AUTH = true;
                     return;
                 }
             } else {
                 System.err.println("Unknown type of command for auth process: " + command.getType());
             }
         }
+    }
+
+    private void closeConnectionTimer(){
+        new Thread(() -> {
+            long a = System.currentTimeMillis();
+            while (true) {
+                if(System.currentTimeMillis() - a >= 150000 && !IS_AUTH){
+                    try {
+                        clientSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if(System.currentTimeMillis() - a >= 150000 && IS_AUTH){
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
     }
 
     private boolean processAuthCommand(Command command) throws IOException {
