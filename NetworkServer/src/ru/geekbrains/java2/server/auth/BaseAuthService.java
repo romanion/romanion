@@ -50,7 +50,7 @@ public class BaseAuthService implements AuthService {
         Connection localConnection = getConnection();
         try {
             PreparedStatement ps =
-                    localConnection.prepareStatement("SELECT * FROM users WHERE login = ? and password = ?");
+                    localConnection.prepareStatement("SELECT nick FROM users WHERE login = ? and password = ?");
             ps.setString(1, login);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
