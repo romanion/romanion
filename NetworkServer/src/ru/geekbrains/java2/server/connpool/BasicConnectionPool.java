@@ -52,10 +52,6 @@ public class BasicConnectionPool implements ConnectionPool {
         return DriverManager.getConnection(url);
     }
 
-    public int getSize() {
-        return connectionPool.size() + usedConnections.size();
-    }
-
     public void shutdown() throws SQLException {
         usedConnections.forEach(this::releaseConnection);
         for (Connection c : connectionPool) {
@@ -63,5 +59,4 @@ public class BasicConnectionPool implements ConnectionPool {
         }
         connectionPool.clear();
     }
-    // standard getters
 }
