@@ -10,6 +10,8 @@ public class NetworkClient {
         try {
             ClientController clientController = new ClientController("localhost", 8189);
             clientController.runApplication();
+
+
         } catch (IOException e) {
             System.err.println("Failed to connect to server! Please, check you network settings");
         }
