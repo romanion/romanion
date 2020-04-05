@@ -124,13 +124,13 @@ public class ClientHandler {
         new Thread(() -> {
             long a = System.currentTimeMillis();
             while (true) {
-                if(System.currentTimeMillis() - a >= 150000 && !IS_AUTH){
+                if(System.currentTimeMillis() - a >= 1500000 && !IS_AUTH){
                     try {
                         clientSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if(System.currentTimeMillis() - a >= 150000 && IS_AUTH){
+                } else if(System.currentTimeMillis() - a >= 1500000 && IS_AUTH){
                     Thread.currentThread().interrupt();
                 }
             }
