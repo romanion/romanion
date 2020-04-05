@@ -26,6 +26,7 @@ public class NetworkService {
     private MessageHandler messageHandler;
     private AuthEvent successfulAuthEvent;
     private String nickname;
+    private String historyFile;
 
     public NetworkService(String host, int port) {
         this.host = host;
@@ -49,7 +50,8 @@ public class NetworkService {
                         case AUTH: {
                             AuthCommand commandData = (AuthCommand) command.getData();
                             nickname = commandData.getUsername();
-                            successfulAuthEvent.authIsSuccessful(nickname);
+                            historyFile = commandData.getHistoryFile();
+                            successfulAuthEvent.authIsSuccessful(nickname, historyFile);
                             break;
                         }
                         case MESSAGE: {

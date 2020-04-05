@@ -5,6 +5,7 @@ import ru.geekbrains.java2.client.controller.ClientController;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.List;
 
 public class ClientChat extends JFrame {
@@ -56,19 +57,26 @@ public class ClientChat extends JFrame {
         messageTextField.setText(null);
     }
 
-    public void appendMessage(String message) {
+    public void appendMessage(String message, boolean saveHistoryFlag) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 chatText.append(message);
                 chatText.append(System.lineSeparator());
+                try {
+                    if(saveHistoryFlag){
+                        controller.updateMessageHistory(message);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
 
     private void appendOwnMessage(String message) {
-        appendMessage("Я: " + message);
+        appendMessage("Я: " + message, true);
     }
 
 

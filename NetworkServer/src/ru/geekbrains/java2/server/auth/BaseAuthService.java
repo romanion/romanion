@@ -50,18 +50,56 @@ public class BaseAuthService implements AuthService {
         Connection localConnection = getConnection();
         try {
             PreparedStatement ps =
-                    localConnection.prepareStatement("SELECT nick FROM users WHERE login = ? and password = ?");
+                    localConnection.prepareStatement("SELECT nick as nick FROM users WHERE login = ? and password = ?");
             ps.setString(1, login);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                nick = rs.getString(1);
+                nick = rs.getString("nick");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             releaseConnection(localConnection);
             return nick;
+        }
+    }
+
+    @Override
+    public String getHistoryFileByLoginAndPassword(String login, String password) {
+        String file = null;
+        Connection localConnection = getConnection();
+        try {
+            PreparedStatement ps =
+                    localConnection.prepareStatement("SELECT file_name FROM users WHERE login = ? and password = ?");
+            ps.setString(1, login);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                file = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            releaseConnection(localConnection);
+            return file;
+        }
+    }
+
+    @Override
+    public void updateHistoryFileName(String login, String password, String historyFile) {
+        Connection localConnection = getConnection();
+        try {
+            PreparedStatement ps =
+                    localConnection.prepareStatement("UPDATE users SET file_name = ? WHERE login = ? and password = ?");
+            ps.setString(1, historyFile);
+            ps.setString(2, login);
+            ps.setString(3, password);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            releaseConnection(localConnection);
         }
     }
 
