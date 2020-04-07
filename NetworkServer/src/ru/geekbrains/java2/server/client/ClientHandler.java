@@ -157,10 +157,28 @@ public class ClientHandler {
             String message = nickname + " зашел в чат!";
             networkServer.broadcastMessage(Command.messageCommand(null, message), this);
             commandData.setUsername(nickname);
+
+            String historyFile = networkServer.getAuthService().getHistoryFileByLoginAndPassword(login, password);
+            if(historyFile == null){
+                historyFile = generateHitoryFileName(login, username);
+                networkServer.getAuthService().updateHistoryFileName(login, username, historyFile);
+            }
+            commandData.setHistoryFile(historyFile);
+
             sendMessage(command);
             networkServer.subscribe(this);
             return true;
         }
+    }
+
+    private String generateHitoryFileName(String login, String usrname){
+        StringBuilder builder = new StringBuilder();
+        builder.append(login);
+        builder.append("_");
+        builder.append(usrname);
+        builder.append(".txt");
+
+        return builder.toString();
     }
 
     public void sendMessage(Command command) throws IOException {

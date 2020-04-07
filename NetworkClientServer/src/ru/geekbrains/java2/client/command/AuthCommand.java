@@ -8,10 +8,19 @@ public class AuthCommand implements Serializable {
     private final String password;
 
     private String username;
+    private String historyFile;
 
     public AuthCommand(String login, String password) {
         this.login = login;
         this.password = password;
+    }
+
+    public String getHistoryFile() {
+        return historyFile;
+    }
+
+    public void setHistoryFile(String historyFile) {
+        this.historyFile = historyFile;
     }
 
     public String getLogin() {
