@@ -9,6 +9,8 @@ import ru.geekbrains.java2.server.NetworkServer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler {
 
@@ -35,7 +37,7 @@ public class ClientHandler {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            new Thread(() -> {
+            Executors.newFixedThreadPool(1).execute(() -> {
                 try {
                     authentication();
                     readMessages();
@@ -44,7 +46,7 @@ public class ClientHandler {
                 } finally {
                     closeConnection();
                 }
-            }).start();
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +123,7 @@ public class ClientHandler {
     }
 
     private void closeConnectionTimer(){
-        new Thread(() -> {
+        Executors.newFixedThreadPool(1).execute(() -> {
             long a = System.currentTimeMillis();
             while (true) {
                 if(System.currentTimeMillis() - a >= 1500000 && !IS_AUTH){
@@ -134,7 +136,7 @@ public class ClientHandler {
                     Thread.currentThread().interrupt();
                 }
             }
-        }).start();
+        });
     }
 
     private boolean processAuthCommand(Command command) throws IOException {
