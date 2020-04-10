@@ -124,13 +124,13 @@ public class ClientHandler {
         new Thread(() -> {
             long a = System.currentTimeMillis();
             while (true) {
-                if(System.currentTimeMillis() - a >= 150000 && !IS_AUTH){
+                if(System.currentTimeMillis() - a >= 1500000 && !IS_AUTH){
                     try {
                         clientSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if(System.currentTimeMillis() - a >= 150000 && IS_AUTH){
+                } else if(System.currentTimeMillis() - a >= 1500000 && IS_AUTH){
                     Thread.currentThread().interrupt();
                 }
             }
@@ -157,10 +157,28 @@ public class ClientHandler {
             String message = nickname + " зашел в чат!";
             networkServer.broadcastMessage(Command.messageCommand(null, message), this);
             commandData.setUsername(nickname);
+
+            String historyFile = networkServer.getAuthService().getHistoryFileByLoginAndPassword(login, password);
+            if(historyFile == null){
+                historyFile = generateHitoryFileName(login, username);
+                networkServer.getAuthService().updateHistoryFileName(login, username, historyFile);
+            }
+            commandData.setHistoryFile(historyFile);
+
             sendMessage(command);
             networkServer.subscribe(this);
             return true;
         }
+    }
+
+    private String generateHitoryFileName(String login, String usrname){
+        StringBuilder builder = new StringBuilder();
+        builder.append(login);
+        builder.append("_");
+        builder.append(usrname);
+        builder.append(".txt");
+
+        return builder.toString();
     }
 
     public void sendMessage(Command command) throws IOException {
