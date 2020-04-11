@@ -1,10 +1,18 @@
 package ru.geekbrains.java2.server;
 
-public class ServerApp {
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.RollingFileAppender;
 
+public class ServerApp {
+    private static final Logger LOGGER = LogManager.getLogger(ServerApp.class);
     private static final int DEFAULT_PORT = 8189;
+    private static final String LOG4J_CONFIGURATION_PATH =
+            "C:\\Users\\roor0717\\Desktop\\GeekBrains\\log4j.properties";
 
     public static void main(String[] args) {
+        PropertyConfigurator.configure(LOG4J_CONFIGURATION_PATH);
         int port = getServerPort(args);
         new NetworkServer(port).start();
     }
@@ -15,7 +23,7 @@ public class ServerApp {
             try {
                 port = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                System.out.println("Некорректный формат порта, будет использоваться порт по умолчанию");
+                LOGGER.error("Некорректный формат порта, будет использоваться порт по умолчанию", e);
             }
         }
         return port;
