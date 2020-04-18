@@ -1,5 +1,6 @@
 package ru.geekbrains.java2.server.client;
 
+import org.apache.log4j.Logger;
 import ru.geekbrains.java2.client.Command;
 import ru.geekbrains.java2.client.CommandType;
 import ru.geekbrains.java2.client.command.AuthCommand;
@@ -23,6 +24,8 @@ public class ClientHandler {
     private String nickname;
     private volatile boolean IS_AUTH = false;
 
+    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class);
+
     public ClientHandler(NetworkServer networkServer, Socket socket) {
         this.networkServer = networkServer;
         this.clientSocket = socket;
@@ -42,7 +45,7 @@ public class ClientHandler {
                     authentication();
                     readMessages();
                 } catch (IOException e) {
-                    System.out.println("Соединение с клиентом " + nickname + " было закрыто!");
+                    LOGGER.info("Соединение с клиентом " + nickname + " было закрыто!");
                 } finally {
                     closeConnection();
                 }
@@ -70,7 +73,7 @@ public class ClientHandler {
             }
             switch (command.getType()) {
                 case END:
-                    System.out.println("Received 'END' command");
+                    LOGGER.info("Received 'END' command");
                     return;
                 case PRIVATE_MESSAGE: {
                     PrivateMessageCommand commandData = (PrivateMessageCommand) command.getData();
@@ -86,7 +89,7 @@ public class ClientHandler {
                     break;
                 }
                 default:
-                    System.err.println("Unknown type of command : " + command.getType());
+                    LOGGER.error("Unknown type of command : " + command.getType());
             }
         }
     }
@@ -96,8 +99,7 @@ public class ClientHandler {
             return (Command) in.readObject();
         } catch (ClassNotFoundException e) {
             String errorMessage = "Unknown type of object from client!";
-            System.err.println(errorMessage);
-            e.printStackTrace();
+            LOGGER.error(errorMessage, e);
             sendMessage(Command.errorCommand(errorMessage));
             return null;
         }
@@ -117,7 +119,7 @@ public class ClientHandler {
                     return;
                 }
             } else {
-                System.err.println("Unknown type of command for auth process: " + command.getType());
+                LOGGER.error("Unknown type of command for auth process: " + command.getType());
             }
         }
     }
@@ -157,6 +159,7 @@ public class ClientHandler {
         else {
             nickname = username;
             String message = nickname + " зашел в чат!";
+            LOGGER.info(message);
             networkServer.broadcastMessage(Command.messageCommand(null, message), this);
             commandData.setUsername(nickname);
 
